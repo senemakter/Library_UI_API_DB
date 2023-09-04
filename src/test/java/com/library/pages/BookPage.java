@@ -1,9 +1,11 @@
 package com.library.pages;
 
+import com.library.utility.BrowserUtil;
 import com.library.utility.Driver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.Select;
 
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class BookPage extends BasePage {
     @FindBy(name = "isbn")
     public WebElement isbn;
 
-    @FindBy(id = "book_group_id")
+    @FindBy(xpath = "//select[@id='book_categories']")
     public WebElement categoryDropdown;
 
 
@@ -49,8 +51,8 @@ public class BookPage extends BasePage {
 
 
 
-    public WebElement editBook(String book) {
-        String xpath = "//td[3][.='" + book + "']/../td/a";
+    public WebElement editBook(String bookISBN) {
+        String xpath = "//td[2][.='"+bookISBN+"']/../td/a";
         return Driver.getDriver().findElement(By.xpath(xpath));
     }
 
@@ -59,6 +61,24 @@ public class BookPage extends BasePage {
         return Driver.getDriver().findElement(By.xpath(xpath));
     }
 
+    public WebElement getCategoryName(int categoryNum){
+        Select select = new Select(categoryDropdown);
+        select.selectByIndex(categoryNum);
+        return select.getFirstSelectedOption();
+    }
 
+    public String getBookDescr(){
+        BrowserUtil.waitForPageToLoad(5);
+        return Driver.getDriver().findElement(By.xpath("//textarea[@id='description']")).getText();
+    }
 
+    public String getCellText(String content){
+        for (WebElement eachCell : allCells) {
+            BrowserUtil.waitFor(2);
+            if(eachCell.getText().equals(content)){
+                return eachCell.getText();
+            }
+        }
+        return null;
+    }
 }
